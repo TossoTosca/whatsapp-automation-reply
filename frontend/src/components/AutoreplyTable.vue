@@ -4,7 +4,6 @@ import { ref, inject } from 'vue';
 defineProps({ autoreplies: Array });
 const emit = defineEmits(['add-reply', 'trigger-delete-confirm']);
 
-// Suntik Kamus Bahasa
 const lang = inject('lang');
 
 const keyword = ref('');

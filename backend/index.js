@@ -12,7 +12,7 @@ app.use(express.json());
 
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
-    cors: { origin: "*" } // Izinkan Vue Frontend mengakses Socket
+    cors: { origin: "*" }
 });
 
 let db;
@@ -36,7 +36,6 @@ async function initWhatsAppBot(nomorHP) {
         takeoverOnConflict: true,
         puppeteer: {
             headless: true,
-            // Argumen super ketat untuk Windows agar Chromium tidak menggantung
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
@@ -51,7 +50,6 @@ async function initWhatsAppBot(nomorHP) {
 
     client.on('qr', async (qr) => {
         try {
-            // Minta kode pairing secara normal tanpa interupsi di dalam event
             const code = await client.requestPairingCode(nomorBersih);
             io.emit('bot-pairing', code);
             io.emit('bot-log', `[INFO] Pairing Code Berhasil Dibuat: ${code}`);
@@ -96,7 +94,7 @@ async function initWhatsAppBot(nomorHP) {
     });
 
     client.on('message', async (msg) => {
-        // ... (Logika pesan masuk tetap sama, jangan diubah) ...
+        // ... (logic incoming messages) ...
     });
 
     client.initialize().catch(err => {
@@ -106,15 +104,13 @@ async function initWhatsAppBot(nomorHP) {
     });
 }
 
-// Fungsi bantu untuk membersihkan variabel secara instan
 function cleanUpClient() {
     client = null;
 }
 
-// Fungsi Sakti untuk Windows: Membunuh paksa sisa proses Chrome yang macet di Task Manager
 function forceKillChromium() {
     exec('taskkill /f /im chrome.exe /im chromium.exe', (err, stdout, stderr) => {
-        // Mute error jika proses memang sudah bersih
+        
     });
 }
 
@@ -128,11 +124,8 @@ function updateStatus(status) {
 // 2. REST API ENDPOINTS
 // ==========================================
 
-// Pemicu Start Bot (Dari Frontend Page 1)
 app.post('/api/bot/start', async (req, res) => {
-    // Setiap kali user mau START, kita bersihkan dulu sisa-sisa zombie process jika ada
-    // if (!client) forceKillChromium();
-    
+
     const { nomor_hp } = req.body;
     if (!nomor_hp) return res.status(400).json({ error: "Nomor wajib diisi!" });
     
@@ -144,7 +137,6 @@ app.post('/api/bot/start', async (req, res) => {
     }
 });
 
-// Endpoint Cancel dari Frontend (Dipanggil ketika user klik batal atau form reset)
 app.post('/api/bot/cancel', async (req, res) => {
     io.emit('bot-log', '[CANCEL] Menghentikan paksa sesi penautan...');
     updateStatus("DISCONNECTED");
@@ -156,14 +148,12 @@ app.post('/api/bot/cancel', async (req, res) => {
         client = null;
     }
     
-    // Beri jeda 1 detik lalu tembak pembunuhan proses Windows
     setTimeout(() => {
         forceKillChromium();
         res.json({ success: true, message: "Sesi dibersihkan total." });
     }, 1000);
 });
 
-// Mematikan/Disconnect Bot (Dari Frontend Page 2)
 app.post('/api/bot/stop', async (req, res) => {
     if (client) {
         io.emit('bot-log', '[SHUTDOWN] Mematikan sesi browser secara aman...');
@@ -181,13 +171,11 @@ app.post('/api/bot/stop', async (req, res) => {
     }
 });
 
-// Ambil Semua Kata Kunci & Balasan
 app.get('/api/autoreplies', async (req, res) => {
     const list = await db.all("SELECT * FROM autoreplies ORDER BY id DESC");
     res.json(list);
 });
 
-// Tambah Kata Kunci Baru
 app.post('/api/autoreplies', async (req, res) => {
     const { keyword, reply } = req.body;
     try {
@@ -198,18 +186,15 @@ app.post('/api/autoreplies', async (req, res) => {
     }
 });
 
-// Hapus Kata Kunci
 app.delete('/api/autoreplies/:id', async (req, res) => {
     await db.run("DELETE FROM autoreplies WHERE id = ?", [req.params.id]);
     res.json({ success: true });
 });
 
-// Ambil & Update Pengaturan (Settings & Blacklist)
 app.get('/api/settings', async (req, res) => {
     const settingsRaw = await db.all("SELECT * FROM settings");
     const blacklist = await db.all("SELECT * FROM ignored_numbers ORDER BY id DESC");
     
-    // Format settings dari array baris menjadi object key-value
     const settings = {};
     settingsRaw.forEach(row => settings[row.key] = row.value);
 
@@ -242,7 +227,6 @@ app.delete('/api/settings/blacklist/:id', async (req, res) => {
 // 3. INITIALIZE SERVER & SOCKET CONNECT
 // ==========================================
 io.on('connection', (socket) => {
-    // Kirim status terakhir saat browser frontend pertama kali dibuka/refresh
     socket.emit('bot-status', botStatus);
     if (client && botStatus === "READY") {
         socket.emit('bot-device-info', { nomor_hp: client.info.wid.user, nama_profil: client.info.pushname });

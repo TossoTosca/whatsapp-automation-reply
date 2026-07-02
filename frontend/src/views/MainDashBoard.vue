@@ -7,7 +7,6 @@ import AlertiOS from '../components/AlertiOS.vue';
 
 const emit = defineEmits(['trigger-disconnect']);
 
-// Menangkap Kamus Bahasa Aktif dari App.vue
 const lang = inject('lang');
 
 const deviceInfo = ref({ nomor_hp: '6281296653845', nama_profil: 'Amanda (Customer Service)' });
@@ -38,7 +37,6 @@ const bukaAlertKonfirmasi = (title, message, callback) => {
   alertShow.value = true;
 };
 
-// Penggunaan Teks Kamus Dinamis pada Dialog Konfirmasi
 const pemicuPutusPerangkat = () => {
   bukaAlertKonfirmasi(lang.value.confirmDisconnectTitle, lang.value.confirmDisconnectDesc, () => { emit('trigger-disconnect'); });
 };

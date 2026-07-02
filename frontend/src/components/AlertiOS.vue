@@ -1,10 +1,8 @@
 <script setup>
 import { inject, computed } from 'vue';
 
-// Tangkap kamus bahasa dari App.vue
 const lang = inject('lang');
 
-// Definisikan props dasar yang aman
 const props = defineProps({
   show: Boolean,
   title: { type: String, default: '' },
@@ -15,20 +13,16 @@ const props = defineProps({
 
 defineEmits(['close', 'confirm']);
 
-// 1. Computed Title
 const displayTitle = computed(() => {
   if (props.title) return props.title;
   return lang?.value?.alertSaveTitle || 'Pemberitahuan';
 });
 
-// 2. CORRECTION BUG: Computed Confirm Text (Tombol Aksi Kanan)
 const displayConfirmText = computed(() => {
-  // Jika dari halaman dikirim properti custom text, pakai itu dulu
   if (props.confirmText) return props.confirmText;
 
   const titleLower = displayTitle.value.toLowerCase();
 
-  // Cek apakah konteksnya adalah aksi penghapusan / pemutusan hubungan
   if (titleLower.includes('hapus') || titleLower.includes('delete') || titleLower.includes('remove')) {
     return lang?.value?.btnDelete || 'Delete';
   }
@@ -39,14 +33,11 @@ const displayConfirmText = computed(() => {
     return lang?.value?.btnUnblock || 'Unblock';
   }
 
-  // Fallback standar jika alert info biasa
   return 'OK';
 });
 
-// 3. Computed Cancel Text (Tombol Batal Kiri)
 const displayCancelText = computed(() => {
   if (lang?.value?.btnCancelPairing) {
-    // Potong teks agar hanya menyisakan kata "Batal" atau "Cancel" murni
     return lang.value.btnCancelPairing.replace('Penautan', '').replace('Pairing', '').trim();
   }
   return 'Cancel';
@@ -65,7 +56,6 @@ const displayCancelText = computed(() => {
         <div v-if="type === 'confirm'" class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold mb-2">?</div>
 
         <div class="px-4 pb-4 space-y-1">
-          <!-- Gunakan variabel computed baru hasil inject -->
           <h4 class="text-[17px] font-semibold text-zinc-950 tracking-tight leading-tight">{{ displayTitle }}</h4>
           <p class="text-[13px] text-zinc-600 leading-snug">{{ message }}</p>
         </div>
@@ -85,7 +75,6 @@ const displayCancelText = computed(() => {
             @click="$emit('close')" 
             class="py-3 font-normal text-zinc-500 hover:bg-zinc-200/50 active:bg-zinc-300/60 transition duration-100 outline-none"
           >
-            <!-- Teks tombol cancel otomatis multibahasa -->
             {{ displayCancelText }}
           </button>
           <button 
@@ -93,7 +82,6 @@ const displayCancelText = computed(() => {
             :class="['py-3 font-semibold hover:bg-zinc-200/50 active:bg-zinc-300/60 transition duration-100 outline-none', 
               displayTitle.includes('Hapus') || displayTitle.includes('Putuskan') || displayTitle.includes('Delete') || displayTitle.includes('Disconnect') ? 'text-red-600' : 'text-blue-600']"
           >
-            <!-- Teks tombol confirm otomatis multibahasa -->
             {{ displayConfirmText }}
           </button>
         </div>

@@ -7,10 +7,10 @@ export const translations = {
   id: {
     // Page 1: Landing
     subtitle: 'Simulasi Antarmuka',
-    title: 'WhatsApp Bot Dashboard',
+    title: 'WhatsApp Automation Reply Dashboard',
     desc: 'Kelola auto-reply kustom, penyaringan kontak keluarga, hingga pembatasan blacklist secara mandiri dengan gaya antarmuka Apple iOS Minimalis.',
     cardTitle: 'Tautkan Perangkat (Demo)',
-    labelNumber: 'Nomor WhatsApp Bot',
+    labelNumber: 'Nomor WhatsApp',
     placeholderNumber: 'Masukkan nomor HP (Contoh: 628129665xxx)',
     btnStart: 'Mulai Inisialisasi Perangkat',
     loadingBrowser: 'Membuka browser server di latar belakang...',
@@ -64,10 +64,10 @@ export const translations = {
   en: {
     // Page 1: Landing
     subtitle: 'Interface Simulation',
-    title: 'WhatsApp Bot Dashboard',
+    title: 'WhatsApp Automation Reply Dashboard',
     desc: 'Manage custom auto-replies, whitelist family contacts, and restrict blacklist numbers seamlessly with an Apple iOS Minimalist interface.',
     cardTitle: 'Link Device (Demo)',
-    labelNumber: 'WhatsApp Bot Number',
+    labelNumber: 'WhatsApp Number',
     placeholderNumber: 'Enter phone number (e.g., 628129665xxx)',
     btnStart: 'Start Device Initialization',
     loadingBrowser: 'Opening server browser in background...',

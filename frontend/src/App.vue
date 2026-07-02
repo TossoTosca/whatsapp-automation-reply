@@ -5,14 +5,11 @@ import MainDashboard from './views/MainDashboard.vue';
 import AlertiOS from './components/AlertiOS.vue';
 import { translations } from './locales/index.js';
 
-// State Bahasa Global (Default: Indonesia)
 const currentLang = ref('id');
 
-// Menyediakan data terjemahan agar bisa diakses oleh MainDashboard.vue dan komponen anak lainnya
 const lang = computed(() => translations[currentLang.value]);
 provide('lang', lang);
 
-// STATE MOCK UI CONTEXT
 const isConnected = ref(false);
 const botStatus = ref("DISCONNECTED");
 const pairingCode = ref("");
@@ -70,7 +67,6 @@ const resetFormTautan = () => {
   if (simulasiTimeout) clearTimeout(simulasiTimeout);
 };
 
-// Fungsi ganti bahasa bergaya iOS Segmented Control
 const toggleLanguage = (locale) => {
   currentLang.value = locale;
 };
